@@ -1,11 +1,11 @@
-<!-- resources/views/layouts/app.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <title>Document</title>
+    <!-- Tambahkan link CSS Bootstrap jika belum ada -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
