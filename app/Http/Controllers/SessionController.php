@@ -30,7 +30,7 @@ class SessionController extends Controller
 
         if(Auth::attempt($infologin)){
             // kalau otentifikasi sukses
-            return redirect('welcome')->with('success','Berhasil Logiin');
+            return redirect('dashboard')->with('success','Berhasil Logiin');
         } else {
             // kalau otentifikasi gagal
             return redirect('sesi')->withErrors('Email dan password yang dimasukkan tidak valid');

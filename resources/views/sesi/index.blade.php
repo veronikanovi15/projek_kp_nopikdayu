@@ -1,8 +1,7 @@
-<!-- resources/views/login.blade.php -->
 @extends('layouts.app')
 
 @section('konten')
-    <div class="w-50 center border rounded px-3 py-3 mx-auto">
+    <div class="w-50 center border rounded px-3 py-3 mx-auto mt-5">
         <h1>Login</h1>
         <form action="/sesi/login" method="POST">
             @csrf
