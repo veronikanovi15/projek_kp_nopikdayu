@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
 
@@ -23,13 +24,20 @@ use App\Http\Controllers\SessionController;
 // });
 
 // routes/web.php
-Route::get('/login', function () {
-    return view('login');
-});
 
-Route::get('/sesi', [SessionController::class, 'index']);
-Route::post('/sesi/login', [SessionController::class, 'login']);
+
+Route::get('/sesi', [SessionController::class, 'index'])->name('login');
+
+// Rute untuk proses login
+Route::post('/sesi/login', [SessionController::class, 'login'])->name('login.submit');
+
+// Rute untuk menampilkan dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
 });
+
+// Rute untuk menampilkan form registrasi
+Route::get('/register', [RegisterController::class, 'regis'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+
 
