@@ -3,6 +3,8 @@
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +42,8 @@ Route::get('/dashboard', function () {
 Route::get('/register', [RegisterController::class, 'regis'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
-
+Route::middleware('auth')->post('/logout', function () {
+    Log::info('Logout route accessed');
+    Auth::logout();
+    return redirect('/sesi'); // Pastikan ini sesuai dengan rute login Anda
+})->name('logout');
