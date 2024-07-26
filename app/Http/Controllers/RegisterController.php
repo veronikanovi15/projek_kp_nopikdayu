@@ -10,7 +10,7 @@ class RegisterController extends Controller
     // Menampilkan form registrasi
     public function regis()
     {
-        return view('register'); // Pastikan viewnya adalah 'register.blade.php'
+        return view('sesi.register'); // Pastikan viewnya adalah 'register.blade.php'
     }
 
     // Menangani proses registrasi
