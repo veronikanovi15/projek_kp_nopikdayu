@@ -75,18 +75,9 @@
       <div class="info">
         <!-- Dropdown for user menu -->
         <div class="dropdown">
-          <a href="#" class="d-block dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a >
             {{ Auth::user()->name }}
           </a>
-          <div class="dropdown-menu" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="#">Profile</a>
-            <a class="dropdown-item" href="#">Settings</a>
-            <div class="dropdown-divider"></div>
-            <form action="{{ route('logout') }}" method="POST" class="dropdown-item p-0">
-              @csrf
-              <button type="submit" class="btn btn-link p-0">Logout</button>
-            </form>
-          </div>
         </div>
       </div>
     </div>
