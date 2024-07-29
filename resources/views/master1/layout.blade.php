@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +11,10 @@
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+
+  <!-- Bootstrap 4 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
 </head>
@@ -24,7 +29,7 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <a class="navbar-brand" href="#">Informasi Aplikasi Pemkab Badung</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
     </ul>
@@ -35,7 +40,7 @@
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
-      <!-- Tombol Logout -->
+      <!-- Logout Button -->
       <form action="{{ route('logout') }}" method="POST" class="d-inline ms-3">
         @csrf
         <button class="btn btn-outline-success" type="submit">Logout</button>
@@ -61,34 +66,38 @@
       <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">AplikasiInfo</span>
     </a>
-    
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar user (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="dropdown text-end">
-          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" id="dropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">admin
+
+    <!-- Sidebar user (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
+      </div>
+      <div class="info">
+        <!-- Dropdown for user menu -->
+        <div class="dropdown">
+          <a href="#" class="d-block dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ Auth::user()->name }}
           </a>
-          <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-          </ul>
+          <div class="dropdown-menu" aria-labelledby="userDropdown">
+            <a class="dropdown-item" href="#">Profile</a>
+            <a class="dropdown-item" href="#">Settings</a>
+            <div class="dropdown-divider"></div>
+            <form action="{{ route('logout') }}" method="POST" class="dropdown-item p-0">
+              @csrf
+              <button type="submit" class="btn btn-link p-0">Logout</button>
+            </form>
+          </div>
         </div>
       </div>
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          @include('master1.sidebar') 
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        @include('master1.sidebar')
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
@@ -129,10 +138,10 @@
 </div>
 <!-- ./wrapper -->
 
-<!-- jQuery -->
-<script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-<!-- Bootstrap 4 -->
-<script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- jQuery (make sure this is included before Bootstrap JS) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap 4 JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
 <!-- AdminLTE for demo purposes -->

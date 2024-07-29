@@ -7,6 +7,14 @@
 @endsection
 
 @section('content')
+<div class="container-fluid">
+        <!-- Menampilkan nama pengguna yang sedang login -->
+        <div class="row mb-4">
+            <div class="col">
+                <h4>Welcome, {{ Auth::user()->name }}!</h4>
+                <!-- Jika kamu ingin menampilkan informasi pengguna lebih lanjut, tambahkan di sini -->
+            </div>
+        </div>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-4 col-6">
