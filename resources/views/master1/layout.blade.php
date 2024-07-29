@@ -75,9 +75,9 @@
       <div class="info">
         <!-- Dropdown for user menu -->
         <div class="dropdown">
-          <a >
+          <p style="color: white;" >
             {{ Auth::user()->name }}
-          </a>
+          </p>
         </div>
       </div>
     </div>
