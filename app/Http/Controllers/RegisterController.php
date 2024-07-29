@@ -7,7 +7,7 @@ use App\Models\User;
 
 class RegisterController extends Controller
 {
-    // Menampilkan form registrasi
+    // Menampilkan form registrasi test
     public function regis()
     {
         return view('sesi.register'); // Pastikan viewnya adalah 'register.blade.php'
