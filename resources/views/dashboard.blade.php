@@ -25,7 +25,7 @@
                 <div class="small-box bg-success">
                     <div class="inner">
                         <h3>Agenda</h3>
-                        <p>dsdsadasd</p>
+                        <p>acara yang akan berlangsung</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-stats-bars"></i>
