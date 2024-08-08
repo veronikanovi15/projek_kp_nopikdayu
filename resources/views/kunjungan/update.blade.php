@@ -61,7 +61,7 @@
               <div class="form-group row">
                     <label for="gambar" class="col-sm-2 col-form-label">Gambar</label>
                     @if ($kunjungan->gambar)
-                        <img src="{{ Storage::url($kunjungan->gambar) }}" alt="Gambar Kunjungan" width="100">
+                            <img src="{{ Storage::url($kunjungan->gambar) }}" alt="Gambar Kunjungan" width="100" class="mb-3">
                     @endif
                     <input type="file" class="form-control" id="gambar" name="gambar">
                 </div>

@@ -143,6 +143,9 @@ class KunjunganController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $kunjungan = MKunjungan::findOrFail($id);
+        $kunjungan -> delete();
+
+        return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil dihapus.');
     }
 }
