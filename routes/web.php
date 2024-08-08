@@ -30,7 +30,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 // routes/web.php
 
 
-Route::get('/sesi', [SessionController::class, 'index'])->name('login');
+Route::get('/', [SessionController::class, 'index'])->name('login');
 
 // Rute untuk proses login
 Route::post('/sesi/login', [SessionController::class, 'login'])->name('login.submit');
