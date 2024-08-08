@@ -7,6 +7,11 @@
     <!--li class="breadcrumb-item active"></li -->
 @endsection
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Kunjungan</h3>
@@ -20,48 +25,51 @@
 
         <div class="card-body">
             <table class="table table-bordered">
-                <tr>
-                    <th>No</th>
-                    <th>Tanggal Kunjungan</th>
-                    <th>Pengunjung</th>
-                    <th>Kota Asal</th>
-                    <th>Penerima Kominfo</th>
-                    <th>Aksi</th>
-                </tr>
-
-                <tr>
-                    <td>No</td>
-                    <td>Tanggal Kunjungan</td>
-                    <td>Pengunjung</td>
-                    <td>Kota Asal</td>
-                    <td>Penerima Kominfo</td>
-                    <td>
-                        <form method="POST" action="">
-                            @csrf 
-                            @method('DELETE')
-                            <a href="">
-                                <button type="button" class="btn btn-warning">
-                                    <i class="fa fa-edit"></i> Edit
-                                </button>
-                            </a>
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin dihapus?'); ">
-                                <i class="fa fa-trash"></i> Hapus
-                            </button>
-                            <a href="">
-                                <button type="button" class="btn btn-primary">
-                                    <i class="fa fa-info"></i> Show
-                                </button>
-                            </a>
-                        </form>
-                            
-                    </td>
-                </tr>
-                
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal Kunjungan</th>
+                        <th>Pengunjung</th>
+                        <th>Kota Asal</th>
+                        <th>Penerima Kominfo</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ( $kunjungans as $kunjungan)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ \Carbon\Carbon::parse($kunjungan->tanggal_kunjungan)->format('d-m-Y') }}</td>
+                            <td>{{ $kunjungan->pengunjung }}</td>
+                            <td>{{ $kunjungan->kota_asal }}</td>
+                            <td>{{ $kunjungan->penerima }}</td>
+                            <td>
+                                <form method="POST" action="">
+                                    @csrf 
+                                    @method('DELETE')
+                                    <a href="{{ route('kunjungan.edit' , $kunjungan->kun_id) }}">
+                                        <button type="button" class="btn btn-warning">
+                                            <i class="fa fa-edit"></i> Edit
+                                        </button>
+                                    </a>
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin dihapus?'); ">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="">
+                                        <button type="button" class="btn btn-primary">
+                                            <i class="fa fa-info"></i> Show
+                                        </button>
+                                    </a>
+                                </form>
+                                    
+                            </td>
+                        </tr>
+                @endforeach
             </table>
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
-            <a href="">
+            <a href="{{ route('kunjungan.create') }}">
                 <button type="button" class="btn btn-primary">
                     <i class="fa fa-plus"></i> Tambah Data
                 </button>
