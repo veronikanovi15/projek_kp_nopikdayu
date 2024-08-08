@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,37 +18,29 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/kendaraan', function () {
-//     return view('welcome');
-// });
-
-// routes/web.php
 
 
+
+// Rute untuk tampilan login
 Route::get('/', [SessionController::class, 'index'])->name('login');
 
 // Rute untuk proses login
 Route::post('/sesi/login', [SessionController::class, 'login'])->name('login.submit');
 
-// Rute untuk menampilkan dashboard
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// });
+
 
 // Rute untuk menampilkan form registrasi
 Route::get('/register', [RegisterController::class, 'regis'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
+// Rute untuk logout
 Route::middleware('auth')->post('/logout', function () {
     Log::info('Logout route accessed');
     Auth::logout();
-    return redirect('/sesi'); // Pastikan ini sesuai dengan rute login Anda
+    return redirect('/'); // Pastikan ini sesuai dengan rute login Anda
 })->name('logout');
+
+// Rute untuk dashboard (dilindungi oleh middleware auth)
 Route::middleware('auth')->group(function () {
-    // Rute untuk dashboard
     Route::get('/dashboard', [ControllerDashboard::class, 'index'])->name('dashboard');
 });

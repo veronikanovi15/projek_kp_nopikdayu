@@ -6,15 +6,15 @@
     </a>
     </li>
     <li class="nav-item">
-    <a href="/kategori" class="nav-link ">
+    <a href="/akses" class="nav-link ">
         <i class="far fa-circle nav-icon"></i>
-        <p>Data Kinerja Pegawai</p>
+        <p>Data Akses</p>
     </a>
     </li> 
     </li>
     <li class="nav-item">
-    <a href="/buku" class="nav-link ">
+    <a href="/kunjungan" class="nav-link ">
         <i class="far fa-circle nav-icon"></i>
-        <p>gatau apa lagi</p>
+        <p>Data Pengunjung</p>
     </a>
     </li>
