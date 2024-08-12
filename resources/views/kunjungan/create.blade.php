@@ -66,6 +66,11 @@
               <div class="form-group row">
                   <div class="offset-sm-2 col-sm-10">
                       <button type="submit" class="btn btn-success">Simpan</button>
+                      <a href="{{ route('kunjungan.index'); }}">
+                            <button type="button" class="btn btn-primary">
+                                <i class="fa fa-left"></i> Batal
+                            </button>
+                        </a>
                   </div>
               </div>
           </form>

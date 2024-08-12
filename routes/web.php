@@ -56,3 +56,5 @@ Route::get('/kunjungan/{id}/edit',[KunjunganController::class, 'edit'])->name('k
 Route::put('/kunjungan/{id}', [KunjunganController::class, 'update'])->name('kunjungan.update');
 // Route untuk menghapus data kunjungan
 Route::delete('/kunjungan/{id}', [KunjunganController::class, 'destroy'])->name('kunjungan.destroy');
+//route untuk melihat detail data
+Route::get('/kunjungan/{id}', [KunjunganController::class, 'show'])->name('kunjungan.show');

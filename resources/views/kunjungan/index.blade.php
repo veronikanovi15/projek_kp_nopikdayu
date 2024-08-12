@@ -55,7 +55,7 @@
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin dihapus?'); ">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="">
+                                    <a href="{{ route('kunjungan.show' , $kunjungan->kun_id) }}">
                                         <button type="button" class="btn btn-primary">
                                             <i class="fa fa-info"></i> Show
                                         </button>
