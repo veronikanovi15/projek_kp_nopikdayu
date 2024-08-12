@@ -50,9 +50,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/kunjungan', [KunjunganController::class, 'index'])->name('kunjungan.index');
 Route::get('/kunjungan-add', [KunjunganController::class, 'create'])->name('kunjungan.create');
 Route::post('/kunjungan', [KunjunganController::class, 'store'])->name('kunjungan.store');
-Route::get('/kunjungan/{id}/edit', 
-
-[KunjunganController::class, 'edit'])->name('kunjungan.edit');
+Route::get('/kunjungan/{id}/edit',[KunjunganController::class, 'edit'])->name('kunjungan.edit');
 
 // Route untuk memperbarui data kunjungan
 Route::put('/kunjungan/{id}', [KunjunganController::class, 'update'])->name('kunjungan.update');
+// Route untuk menghapus data kunjungan
+Route::delete('/kunjungan/{id}', [KunjunganController::class, 'destroy'])->name('kunjungan.destroy');
+//route untuk melihat detail data
+Route::get('/kunjungan/{id}', [KunjunganController::class, 'show'])->name('kunjungan.show');

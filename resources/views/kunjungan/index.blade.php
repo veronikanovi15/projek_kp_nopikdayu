@@ -7,11 +7,11 @@
     <!--li class="breadcrumb-item active"></li -->
 @endsection
 @section('content')
-    @if (session('success'))
+    <!-- @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
-    @endif
+    @endif -->
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Kunjungan</h3>
@@ -44,7 +44,7 @@
                             <td>{{ $kunjungan->kota_asal }}</td>
                             <td>{{ $kunjungan->penerima }}</td>
                             <td>
-                                <form method="POST" action="">
+                                <form method="POST" action="{{ route('kunjungan.destroy', $kunjungan->kun_id) }}">
                                     @csrf 
                                     @method('DELETE')
                                     <a href="{{ route('kunjungan.edit' , $kunjungan->kun_id) }}">
@@ -55,7 +55,7 @@
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin dihapus?'); ">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="">
+                                    <a href="{{ route('kunjungan.show' , $kunjungan->kun_id) }}">
                                         <button type="button" class="btn btn-primary">
                                             <i class="fa fa-info"></i> Show
                                         </button>
@@ -78,3 +78,20 @@
         <!-- /.card-footer-->
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+            @endif
+        });
+    </script>
+@endpush

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\MKunjungan;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -49,25 +51,46 @@ class KunjunganController extends Controller
             'gambar' => 'nullable|file|mimes:jpg,png|max:2048',
         ]);
     
-        // Ambil tanggal dari input
-        $tanggalInput = $request->input('tanggal_kunjungan');
-        
-        // Konversi tanggal ke format yang sesuai untuk database
-        $tanggalDatabase = Carbon::createFromFormat('Y-m-d', $tanggalInput)->format('Y-m-d');
-        
-        // Simpan data ke database
         $kunjungan = new MKunjungan();
-        $kunjungan->tanggal_kunjungan = $tanggalDatabase;
+        $kunjungan->tanggal_kunjungan = $request->input('tanggal_kunjungan');
         $kunjungan->pengunjung = $request->input('pengunjung');
         $kunjungan->kota_asal = $request->input('kota_asal');
         $kunjungan->penerima = $request->input('penerima');
-        
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $filePath = $file->store('public/images');
-            $kunjungan->gambar = $filePath;
+
+        // $path = $request->file('gambar')->store('images', 'public');
+        // $kunjungan->gambar = $path;
+    
+        // if ($request->hasFile('gambar')) {
+        //     $file = $request->file('gambar');
+            
+        //     // Ubah nama file menjadi nama pengunjung
+        //     $fileName = Str::slug($request->input('pengunjung')) . '-' . time() . '.' . $file->getClientOriginalExtension();
+        //     $filePath = $file->storeAs('public/images', $fileName);
+            
+        //     $kunjungan->gambar = $filePath;
+        // }
+        // 
+        $image = $request->gambar;
+        if (!empty($image)) {
+            $path = public_path().'/images/';
+            
+            // Mengambil nama pengunjung dan mengubahnya menjadi slug
+            $pengunjungName = preg_replace('/\s+/', '-', strtolower($request->input('pengunjung')));
+            
+            // Mengambil ekstensi file asli
+            $extension = $image->getClientOriginalExtension();
+            
+            // Membuat nama file dengan nama pengunjung dan ekstensi file
+            $nameFile = $pengunjungName . '-' . rand(10,100) . '.' . $extension;
+            
+            // Memindahkan file ke folder images
+            $image->move($path, $nameFile);
+        } else {
+            $nameFile = "-";
         }
-        
+
+        $kunjungan->gambar = $nameFile;
+
         $kunjungan->save();
     
         return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil disimpan.');
@@ -81,7 +104,9 @@ class KunjunganController extends Controller
      */
     public function show($id)
     {
-        //
+        $kunjungan = MKunjungan::findOrFail($id);
+        $url = Storage::url($kunjungan->gambar);
+            return view('kunjungan.show', compact('kunjungan', 'url'));
     }
 
     /**
@@ -106,33 +131,49 @@ class KunjunganController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'tanggal_kunjungan' => 'required|date_format:Y-m-d',
-            'pengunjung' => 'required|string|max:255',
-            'kota_asal' => 'required|string|max:255',
-            'penerima' => 'required|string|max:255',
-            'gambar' => 'nullable|file|mimes:jpg,png|max:2048',
-        ]);
-    
-        $kunjungan = MKunjungan::findOrFail($id);
-        $kunjungan->tanggal_kunjungan = Carbon::createFromFormat('Y-m-d', $request->input('tanggal_kunjungan'))->format('Y-m-d');
-        $kunjungan->pengunjung = $request->input('pengunjung');
-        $kunjungan->kota_asal = $request->input('kota_asal');
-        $kunjungan->penerima = $request->input('penerima');
-    
-        if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
-            if ($kunjungan->gambar) {
-                Storage::delete($kunjungan->gambar);
+        'tanggal_kunjungan' => 'required|date_format:Y-m-d',
+        'pengunjung' => 'required|string|max:255',
+        'kota_asal' => 'required|string|max:255',
+        'penerima' => 'required|string|max:255',
+        'gambar' => 'nullable|file|mimes:jpg,png|max:2048',
+    ]);
+
+    $kunjungan = MKunjungan::findOrFail($id);
+    $kunjungan->tanggal_kunjungan = $request->input('tanggal_kunjungan');
+    $kunjungan->pengunjung = $request->input('pengunjung');
+    $kunjungan->kota_asal = $request->input('kota_asal');
+    $kunjungan->penerima = $request->input('penerima');
+
+    if ($request->hasFile('gambar')) {
+        // Hapus gambar lama jika ada
+        if ($kunjungan->gambar && $kunjungan->gambar !== '-') {
+            $oldImagePath = public_path().'/images/'.$kunjungan->gambar;
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
             }
-    
-            $file = $request->file('gambar');
-            $filePath = $file->store('public/images');
-            $kunjungan->gambar = $filePath;
         }
-    
-        $kunjungan->save();
-    
-        return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil diperbarui.');
+
+        $image = $request->gambar;
+
+        // Mengambil nama pengunjung dan mengubahnya menjadi slug
+        $pengunjungName = preg_replace('/\s+/', '-', strtolower($request->input('pengunjung')));
+        
+        // Mengambil ekstensi file asli
+        $extension = $image->getClientOriginalExtension();
+        
+        // Membuat nama file dengan nama pengunjung dan ekstensi file
+        $nameFile = $pengunjungName . '-' . rand(10,100) . '.' . $extension;
+        
+        // Memindahkan file ke folder images
+        $path = public_path().'/images/';
+        $image->move($path, $nameFile);
+
+        $kunjungan->gambar = $nameFile;
+    }
+
+    $kunjungan->save();
+
+    return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil diperbarui.');
     }
 
     /**
@@ -143,6 +184,15 @@ class KunjunganController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $kunjungan = MKunjungan::findOrFail($id);
+
+        if ($kunjungan->gambar) {
+            // Hapus gambar dari storage
+            Storage::delete($kunjungan->gambar);
+        }
+
+        $kunjungan->delete();
+
+        return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil dihapus.');
     }
 }
