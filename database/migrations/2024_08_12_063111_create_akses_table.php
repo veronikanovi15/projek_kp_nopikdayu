@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('m_kunjungans', function (Blueprint $table) {
-            $table->id('kun_id'); // Primary key dengan auto-increment
-            $table->date('tanggal_kunjungan');
-            $table->string('pengunjung');
-            $table->string('kota_asal');
-            $table->string('penerima');
-            $table->string('gambar')->nullable();
+        Schema::create('akses', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('url');
+            $table->string('username');
+            $table->string('password');
+            $table->string('keterangan');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_kunjungans');
+        Schema::dropIfExists('akses');
     }
 };

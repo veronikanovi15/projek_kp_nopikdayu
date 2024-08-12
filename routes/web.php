@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AksesController;
 use App\Http\Controllers\ControllerDashboard;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\KunjunganController;
@@ -58,3 +59,11 @@ Route::put('/kunjungan/{id}', [KunjunganController::class, 'update'])->name('kun
 Route::delete('/kunjungan/{id}', [KunjunganController::class, 'destroy'])->name('kunjungan.destroy');
 //route untuk melihat detail data
 Route::get('/kunjungan/{id}', [KunjunganController::class, 'show'])->name('kunjungan.show');
+
+Route::resource('/akses',AksesController::class);
+
+// Menampilkan formulir untuk menambahkan data
+Route::get('/akses/create', [AksesController::class, 'create'])->name('akses.create');
+
+// Menyimpan data baru
+Route::post('/akses', [AksesController::class, 'store'])->name('akses.store');
