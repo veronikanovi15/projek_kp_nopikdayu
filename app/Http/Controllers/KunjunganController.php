@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\MKunjungan;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -15,13 +15,20 @@ class KunjunganController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil semua data kunjungan dari database
-        $kunjungans = MKunjungan::all();
-        
-        // Kirim data ke tampilan
-        return view('kunjungan.index', compact('kunjungans'));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+    
+        // Jika filter ada, tampilkan data yang difilter
+        if ($startDate && $endDate) {
+            $kunjungans = MKunjungan::whereBetween('tanggal_kunjungan', [$startDate, $endDate])->get();
+        } else {
+            // Jika tidak ada filter, tampilkan semua data
+            $kunjungans = MKunjungan::all();
+        }
+    
+        return view('kunjungan.index', compact('kunjungans', 'startDate', 'endDate'));
     }
 
     /**
@@ -195,4 +202,26 @@ class KunjunganController extends Controller
 
         return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil dihapus.');
     }
+
+   
+
+    public function cetakLaporan(Request $request)
+    {
+        // Ambil data filter dari permintaan
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    // Ambil data kunjungan sesuai filter, atau ambil semua data jika tidak ada filter
+    if ($startDate && $endDate) {
+        $kunjungans = MKunjungan::whereBetween('tanggal_kunjungan', [$startDate, $endDate])->get();
+    } else {
+        $kunjungans = MKunjungan::all();
+    }
+
+    // Generate PDF dan kembalikan
+    $pdf = \PDF::loadView('kunjungan.laporan', compact('kunjungans'));
+    return $pdf->download('laporan_kunjungan.pdf');
+    }
+
+    
 }

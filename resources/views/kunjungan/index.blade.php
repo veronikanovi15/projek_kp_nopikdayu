@@ -12,6 +12,30 @@
             {{ session('success') }}
         </div>
     @endif -->
+    <!-- Filter Form -->
+    <!-- Filter Form -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Filter Laporan Kunjungan</h3>
+        </div>
+
+        <div class="card-body">
+        <form action="{{ route('kunjungan.index') }}" method="GET" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="start_date" class="mr-2">Tanggal Mulai:</label>
+                <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+            </div>
+            <div class="form-group mr-2">
+                <label for="end_date" class="mr-2">Tanggal Akhir:</label>
+                <input type="date" id="end_date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary">Reset Filter</a>
+        </form>
+    </div>
+    </div>
+    
+    <!--tabel-->
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Kunjungan</h3>
@@ -72,6 +96,11 @@
             <a href="{{ route('kunjungan.create') }}">
                 <button type="button" class="btn btn-primary">
                     <i class="fa fa-plus"></i> Tambah Data
+                </button>
+            </a>
+            <a href="{{ route('kunjungan.cetak', ['start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
+                <button type="button" class="btn btn-primary">
+                    <i class="fa fa-print"></i> Cetak Laporan
                 </button>
             </a>
         </div>

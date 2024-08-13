@@ -59,6 +59,8 @@ Route::put('/kunjungan/{id}', [KunjunganController::class, 'update'])->name('kun
 Route::delete('/kunjungan/{id}', [KunjunganController::class, 'destroy'])->name('kunjungan.destroy');
 //route untuk melihat detail data
 Route::get('/kunjungan/{id}', [KunjunganController::class, 'show'])->name('kunjungan.show');
+Route::get('/kunjungan-laporan', [KunjunganController::class, 'laporan'])->name('kunjungan.laporan');
+Route::get('/kunjungan-cetak', [KunjunganController::class, 'cetakLaporan'])->name('kunjungan.cetak');
 
 Route::resource('/akses',AksesController::class);
 
@@ -67,3 +69,4 @@ Route::get('/akses/create', [AksesController::class, 'create'])->name('akses.cre
 
 // Menyimpan data baru
 Route::post('/akses', [AksesController::class, 'store'])->name('akses.store');
+
