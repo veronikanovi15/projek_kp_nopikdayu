@@ -17,18 +17,25 @@ class KunjunganController extends Controller
      */
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-    
-        // Jika filter ada, tampilkan data yang difilter
-        if ($startDate && $endDate) {
-            $kunjungans = MKunjungan::whereBetween('tanggal_kunjungan', [$startDate, $endDate])->get();
-        } else {
-            // Jika tidak ada filter, tampilkan semua data
-            $kunjungans = MKunjungan::all();
-        }
-    
-        return view('kunjungan.index', compact('kunjungans', 'startDate', 'endDate'));
+        $query = MKunjungan::query();
+
+    // Filter by Date Range
+    if ($request->start_date && $request->end_date) {
+        $query->whereBetween('tanggal_kunjungan', [$request->start_date, $request->end_date]);
+    }
+
+    // Search by Date or Month
+    if ($request->search) {
+        $searchTerm = $request->search;
+        $query->where(function($q) use ($searchTerm) {
+            $q->whereRaw("DATE_FORMAT(tanggal_kunjungan, '%d-%m-%Y') LIKE ?", ["%$searchTerm%"])
+              ->orWhereRaw("DATE_FORMAT(tanggal_kunjungan, '%m-%Y') LIKE ?", ["%$searchTerm%"]);
+        });
+    }
+
+    $kunjungans = $query->get();
+
+    return view('kunjungan.index', compact('kunjungans'));
     }
 
     /**

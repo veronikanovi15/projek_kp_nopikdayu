@@ -41,9 +41,16 @@
             <h3 class="card-title">Kunjungan</h3>
 
             <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
+                <form action="{{ route('kunjungan.index') }}" method="GET">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" class="form-control float-right" placeholder="Cari Tanggal/Bulan" value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
