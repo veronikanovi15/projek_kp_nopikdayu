@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Aksess;
+use App\Models\MKunjungan;
 
 class ControllerDashboard extends Controller
 {
@@ -14,6 +16,12 @@ class ControllerDashboard extends Controller
     // Metode untuk menampilkan halaman dashboard
     public function index()
     {
-        return view('dashboard'); // Nama view dashboard
+        $aksesCount = Aksess::count(); // Menghitung jumlah data di tabel Akses
+        $kunjunganCount = MKunjungan::count(); // Menghitung jumlah data di tabel Kunjungan
+
+        return view('dashboard', [
+            'aksesCount' => $aksesCount,
+            'kunjunganCount' => $kunjunganCount
+        ]);
     }
 }

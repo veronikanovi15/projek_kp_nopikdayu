@@ -39,10 +39,6 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <form class="d-flex ms-auto">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
       <!-- Logout Button -->
       <form action="{{ route('logout') }}" method="POST" class="d-inline ms-3">
         @csrf

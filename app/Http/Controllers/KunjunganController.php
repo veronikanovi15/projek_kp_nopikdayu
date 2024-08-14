@@ -19,23 +19,23 @@ class KunjunganController extends Controller
     {
         $query = MKunjungan::query();
 
-    // Filter by Date Range
-    if ($request->start_date && $request->end_date) {
-        $query->whereBetween('tanggal_kunjungan', [$request->start_date, $request->end_date]);
-    }
+        // Filter by Date Range
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('tanggal_kunjungan', [$request->start_date, $request->end_date]);
+        }
 
-    // Search by Date or Month
-    if ($request->search) {
-        $searchTerm = $request->search;
-        $query->where(function($q) use ($searchTerm) {
-            $q->whereRaw("DATE_FORMAT(tanggal_kunjungan, '%d-%m-%Y') LIKE ?", ["%$searchTerm%"])
-              ->orWhereRaw("DATE_FORMAT(tanggal_kunjungan, '%m-%Y') LIKE ?", ["%$searchTerm%"]);
-        });
-    }
+        // Search by Date or Month
+        if ($request->search) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereRaw("DATE_FORMAT(tanggal_kunjungan, '%d-%m-%Y') LIKE ?", ["%$searchTerm%"])
+                ->orWhereRaw("DATE_FORMAT(tanggal_kunjungan, '%m-%Y') LIKE ?", ["%$searchTerm%"]);
+            });
+        }
 
-    $kunjungans = $query->get();
+        $kunjungans = $query->get();
 
-    return view('kunjungan.index', compact('kunjungans'));
+        return view('kunjungan.index', compact('kunjungans'));
     }
 
     /**
