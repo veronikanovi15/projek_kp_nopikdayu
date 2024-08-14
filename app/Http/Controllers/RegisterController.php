@@ -40,5 +40,5 @@ class RegisterController extends Controller
 
         // Redirect ke route login dengan pesan sukses
         return redirect()->route('login')->with('success', 'Pendaftaran berhasil. Silakan login.');
-    }
+}
 }

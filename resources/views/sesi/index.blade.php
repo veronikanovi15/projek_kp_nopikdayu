@@ -48,6 +48,8 @@
 <body>
     <div class="container">
         <div class="login-container">
+        <h1 style="text-align: center;">Welcome</h1>
+        <h2>Command Center Badung</h2>
             <form action="{{ route('login.submit') }}" method="POST">
                 @csrf
                 <div class="mb-3">

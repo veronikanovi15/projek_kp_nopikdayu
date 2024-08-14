@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Aksess;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class AksesController extends Controller
 {
@@ -55,9 +57,12 @@ class AksesController extends Controller
             'password' => 'required',
             'keterangan' => 'required',
         ]);
-
+    
+        // Enkripsi password
+        $validated['password'] = Crypt::encryptString($validated['password']);
+    
         Aksess::create($validated);
-
+    
         return redirect("/akses")->with("status", "Data berhasil disimpan!");
     }
 
@@ -101,10 +106,13 @@ class AksesController extends Controller
             'password' => 'required',
             'keterangan' => 'required',
         ]);
-
+    
+        // Enkripsi password
+        $validated['password'] = Crypt::encryptString($validated['password']);
+    
         $akses = Aksess::findOrFail($id);
         $akses->update($validated);
-
+    
         return redirect("/akses")->with("status", "Data berhasil diperbarui!");
     }
 
@@ -121,4 +129,38 @@ class AksesController extends Controller
 
         return redirect("/akses")->with("status", "Data berhasil dihapus!");
     }
+
+    public function getPassword($id)
+{
+    $akses = Aksess::find($id);
+
+    if ($akses) {
+        try {
+            $decryptedPassword = Crypt::decryptString($akses->password); // Gunakan decryptString untuk password
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mendekripsi password',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'nama' => $akses->nama,
+            'username' => $akses->username,
+            'password' => $decryptedPassword,
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Data tidak ditemukan',
+    ]);
+}
+
+
+    
+
+
+
 }

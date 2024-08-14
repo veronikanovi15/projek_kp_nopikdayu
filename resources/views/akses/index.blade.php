@@ -1,3 +1,5 @@
+
+
 @extends('master1.layout')
 
 @section('judul', 'Pengelolaan Akses')
@@ -26,6 +28,9 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fa fa-search"></i> Cari
                 </button>
+                <a href="{{ route('akses.index') }}" class="btn btn-secondary">
+                    <i class="fa fa-times"></i> Reset
+                </a>
             </form>
         </div>
     </div>
@@ -59,7 +64,13 @@
                             <td>{{ $item->nama }}</td>
                             <td>{{ $item->url }}</td>
                             <td>{{ $item->username }}</td>
-                            <td>{{ $item->password }}</td>
+                              <!-- Tombol untuk melihat password -->
+                        <td>
+                            <button class="btn btn-info view-password" data-id="{{ $item->id }}">
+                            <i class="fa fa-eye"></i> Lihat Password
+                             </button>
+                            <span class="password-text" id="password-{{ $item->id }}"></span>
+                        </td>
                             <td>{{ $item->keterangan }}</td>
                             <td>
                                 <form method="POST" action="{{ route('akses.destroy', $item->id) }}">
@@ -92,9 +103,54 @@
 @endsection
 
 @push('scripts')
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function() {
+            $('.view-password').click(function() {
+                var id = $(this).data('id');
+
+                $.ajax({
+                    url: '/akses/' + id + '/password',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response); // Tambahkan ini untuk debug
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Detail Akses',
+                                html: `
+                                    <p><strong>Nama:</strong> ${response.nama}</p>
+                                    <p><strong>Username:</strong> ${response.username}</p>
+                                    <p><strong>Password:</strong> ${response.password}</p>
+                                `,
+                                icon: 'info',
+                                showCloseButton: true,
+                                confirmButtonText: 'Tutup'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: response.message || 'Gagal mengambil data',
+                                icon: 'error',
+                                confirmButtonText: 'Tutup'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error); // Tambahkan ini untuk debug
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Terjadi kesalahan',
+                            icon: 'error',
+                            confirmButtonText: 'Tutup'
+                        });
+                    }
+                });
+            });
+
             @if (session('status'))
                 Swal.fire({
                     icon: 'success',
@@ -107,3 +163,4 @@
         });
     </script>
 @endpush
+

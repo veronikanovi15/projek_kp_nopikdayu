@@ -35,6 +35,7 @@ Route::post('/sesi/login', [SessionController::class, 'login'])->name('login.sub
 Route::get('/register', [RegisterController::class, 'regis'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
+
 // Rute untuk logout
 Route::middleware('auth')->post('/logout', function () {
     Log::info('Logout route accessed');
@@ -69,4 +70,7 @@ Route::get('/akses/create', [AksesController::class, 'create'])->name('akses.cre
 
 // Menyimpan data baru
 Route::post('/akses', [AksesController::class, 'store'])->name('akses.store');
+
+Route::get('/akses/{id}/password', [AksesController::class, 'getPassword'])->name('akses.password');
+
 
