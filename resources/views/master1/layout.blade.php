@@ -20,13 +20,15 @@
 
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+
 </head>
+
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
+  <nav class="fixed-top main-header navbar navbar-expand navbar-white navbar-light" style="z-index: 1030;">
+    <!-- Navbar sebelah kiri -->
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -37,9 +39,9 @@
       </button>
     </ul>
 
-    <!-- Right navbar links -->
+    <!-- Navbar sebelah kanan -->
     <ul class="navbar-nav ml-auto">
-      <!-- Logout Button -->
+      <!-- button logout -->
       <form action="{{ route('logout') }}" method="POST" class="d-inline ms-3">
         @csrf
         <button class="btn btn-outline-success" type="submit">Logout</button>
@@ -59,35 +61,36 @@
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 1020;">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
       <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">AplikasiInfo</span>
     </a>
 
-    <!-- Sidebar user (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
-      </div>
-      <div class="info">
-        <!-- Dropdown for user menu -->
-        <div class="dropdown">
-          <p style="color: white;" >
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <p style="color: white;">
             {{ Auth::user()->name }}
           </p>
         </div>
       </div>
-    </div>
 
-    <!-- Sidebar Menu -->
-    <nav class="mt-2">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        @include('master1.sidebar')
-      </ul>
-    </nav>
-    <!-- /.sidebar-menu -->
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          @include('master1.sidebar')
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
