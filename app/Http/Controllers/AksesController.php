@@ -131,6 +131,7 @@ class AksesController extends Controller
     }
 
     public function getPassword($id)
+<<<<<<< HEAD
     {
         $akses = Aksess::find($id);
     
@@ -161,4 +162,38 @@ class AksesController extends Controller
         ]);
     }
 
+=======
+{
+    $akses = Aksess::find($id);
+
+    if ($akses) {
+        try {
+            $decryptedPassword = Crypt::decryptString($akses->password); // Gunakan decryptString untuk password
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mendekripsi password',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'nama' => $akses->nama,
+            'username' => $akses->username,
+            'password' => $decryptedPassword,
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Data tidak ditemukan',
+    ]);
+}
+
+
+    
+
+
+
+>>>>>>> 20edef54e3fac82937abfd8a05bc1b38379898fc
 }
