@@ -157,10 +157,4 @@ class AksesController extends Controller
         'message' => 'Data tidak ditemukan',
     ]);
 }
-
-
-    
-
-
-
 }
