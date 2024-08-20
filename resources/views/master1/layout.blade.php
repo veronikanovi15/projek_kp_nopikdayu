@@ -33,7 +33,7 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-      <a class="navbar-brand" href="#" style="font-weight: bold;">Informasi Akses dan Kunjungan</a>
+      <a class="navbar-brand" href="#" style="font-weight: bold;">Informasi Akses dan Kunjungan Badung Command Center</a>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
