@@ -131,30 +131,33 @@ class AksesController extends Controller
     }
 
     public function getPassword($id)
-{
-    $akses = Aksess::find($id);
-
-    if ($akses) {
-        try {
-            $decryptedPassword = Crypt::decryptString($akses->password); // Gunakan decryptString untuk password
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+    {
+        $akses = Aksess::find($id);
+    
+        if ($akses) {
+            try {
+                // Dekripsi password
+                $decryptedPassword = Crypt::decryptString($akses->password);
+            } catch (DecryptException $e) {
+                // Log pengecualian dan kirimkan respons
+                \Log::error('DecryptException: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mendekripsi password',
+                ]);
+            }
+    
             return response()->json([
-                'success' => false,
-                'message' => 'Gagal mendekripsi password',
+                'success' => true,
+                'nama' => $akses->nama,
+                'username' => $akses->username,
+                'password' => $decryptedPassword,
             ]);
         }
-
+    
         return response()->json([
-            'success' => true,
-            'nama' => $akses->nama,
-            'username' => $akses->username,
-            'password' => $decryptedPassword,
+            'success' => false,
+            'message' => 'Data tidak ditemukan',
         ]);
     }
-
-    return response()->json([
-        'success' => false,
-        'message' => 'Data tidak ditemukan',
-    ]);
-}
 }

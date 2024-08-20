@@ -7,6 +7,10 @@
     "require": {
         "php": "^8.0",
         "barryvdh/laravel-dompdf": "2.0",
+<<<<<<< HEAD
+        "doctrine/dbal": "^3.9",
+=======
+>>>>>>> 20edef54e3fac82937abfd8a05bc1b38379898fc
         "fruitcake/laravel-cors": "^2.0.5",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.0",
