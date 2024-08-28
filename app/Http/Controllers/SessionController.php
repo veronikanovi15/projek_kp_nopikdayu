@@ -17,11 +17,13 @@ class SessionController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'g-recaptcha-response' => 'required|captcha'
         ],[
             'email.required' => 'Email wajib diisi',
             'email.email' => 'Format email tidak valid',
-            'password.required' => 'Password wajib diisi'
+            'password.required' => 'Password wajib diisi',
+            'g-recaptcha-response.required' => 'Pastikan Anda bukan robot'
         ]);
 
         $infologin = [

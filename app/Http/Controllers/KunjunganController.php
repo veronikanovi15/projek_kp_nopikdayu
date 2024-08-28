@@ -71,19 +71,6 @@ class KunjunganController extends Controller
         $kunjungan->kota_asal = $request->input('kota_asal');
         $kunjungan->penerima = $request->input('penerima');
 
-        // $path = $request->file('gambar')->store('images', 'public');
-        // $kunjungan->gambar = $path;
-    
-        // if ($request->hasFile('gambar')) {
-        //     $file = $request->file('gambar');
-            
-        //     // Ubah nama file menjadi nama pengunjung
-        //     $fileName = Str::slug($request->input('pengunjung')) . '-' . time() . '.' . $file->getClientOriginalExtension();
-        //     $filePath = $file->storeAs('public/images', $fileName);
-            
-        //     $kunjungan->gambar = $filePath;
-        // }
-        // 
         $image = $request->gambar;
         if (!empty($image)) {
             $path = public_path().'/images/';
