@@ -1,5 +1,3 @@
-
-
 @extends('master1.layout')
 
 @section('judul', 'Tambah User')
