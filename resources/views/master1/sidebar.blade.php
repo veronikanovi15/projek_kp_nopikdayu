@@ -18,3 +18,9 @@
         <p>Data Pengunjung</p>
     </a>
     </li>
+    <li class="nav-item">
+    <a href="/masteruser" class="nav-link ">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Data Users</p>
+    </a>
+    </li>
