@@ -1,5 +1,3 @@
-
-
 @extends('master1.layout')
 
 @section('judul', 'Pengelolaan User')
@@ -69,63 +67,70 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function() {
-            var table = $('#userTable').DataTable({
-                processing: true,
-                serverSide: true,
-                searching: false,
-                ajax: {
-                    url: '{{ route('masteruser.data') }}',
-                    type: 'GET',
-                    data: function (d) {
-                        d.search = $('#search').val(); // Pass the search input value
-                    }
-                },
-                columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'email', name: 'email' },
-                    { data: 'action', name: 'action', orderable: false, searchable: false }
-                ]
-            });
+    $(document).ready(function() {
+    // Inisialisasi DataTable
+    $('#userTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('masteruser.data') }}',
+            type: 'GET',
+            data: function(d) {
+                d.search = $('#search').val();
+            }
+        },
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            {
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `
+                        <a href="{{ url('masteruser') }}/${row.id}" class="btn btn-info btn-sm">Show</a>
+                        <a href="${row.edit_url}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="${row.delete_url}" class="btn btn-danger btn-sm delete-user">Delete</a>
+                    `;
+                }
+            }
+        ]
+    });
 
-            // Add event listener for delete buttons
-            $('#userTable').on('click', '.delete-user', function (e) {
-                e.preventDefault();
-                var url = $(this).attr('href');
-                Swal.fire({
-                    title: 'Yakin ingin menghapus?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Hapus',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: url,
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function (response) {
-                                table.ajax.reload(); // Reload table data
-                                Swal.fire(
-                                    'Terhapus!',
-                                    'User telah dihapus.',
-                                    'success'
-                                );
-                            },
-                            error: function (xhr) {
-                                Swal.fire(
-                                    'Gagal!',
-                                    'Terjadi kesalahan saat menghapus user.',
-                                    'error'
-                                );
-                            }
+    // Penanganan tombol delete dengan SweetAlert2
+    $('#userTable').on('click', '.delete-user', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#userTable').DataTable().ajax.reload(); // Reload tabel setelah delete
+                        Swal.fire('Terhapus!', 'User telah dihapus.', 'success').then(() => {
+                            window.location.href = '{{ route('masteruser.index') }}'; // Redirect setelah aksi berhasil
                         });
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus user.', 'error');
                     }
                 });
-            });
+            }
         });
+    });
+});
+
     </script>
 @endpush

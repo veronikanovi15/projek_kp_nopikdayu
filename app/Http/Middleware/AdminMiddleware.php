@@ -16,11 +16,10 @@ class AdminMiddleware
      */
     public function handle($request, Closure $next)
 {
-    // Memeriksa apakah pengguna sudah login dan memiliki peran admin
-    if (Auth::check() && Auth::user()->is_admin) {
+    if (Auth::check() && Auth::user()->role === 'admin') {
         \Log::info('AdminMiddleware passed: User is admin.');
         return $next($request);
-    }
+    }    
 
     \Log::warning('AdminMiddleware failed: User is not admin.');
     // Redirect jika bukan admin

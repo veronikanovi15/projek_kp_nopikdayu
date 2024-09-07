@@ -73,19 +73,22 @@ class AksesController extends Controller
      */
     public function show($id)
     {
-        $akses = Aksess::findOrFail($id);
+        // Temukan user berdasarkan ID
+        $user = User::findOrFail($id);
 
         // Dekripsi password jika ada
-        if ($akses->password) {
+        if ($user->password) {
             try {
-                $akses->password = Crypt::decryptString($akses->password);
+                $user->password = Crypt::decryptString($user->password);
             } catch (DecryptException $e) {
-                \Log::error('DecryptException: ' . $e->getMessage());
-                $akses->password = 'Gagal mendekripsi password';
+                // Log error jika dekripsi gagal
+                Log::error('DecryptException: ' . $e->getMessage());
+                $user->password = 'Gagal mendekripsi password';
             }
         }
-    
-        return view('akses.show', compact('akses'));
+
+        // Tampilkan tampilan dengan data user
+        return view('user.show', compact('user'));
     }
 
     /**

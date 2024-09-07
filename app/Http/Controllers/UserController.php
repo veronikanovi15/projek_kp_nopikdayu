@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Crypt;
+use Yajra\DataTables\DataTables;
 use Illuminate\Contracts\Encryption\DecryptException;
-use DataTables; // Pastikan Anda mengimpor DataTables
 
 class UserController extends Controller
 {
@@ -23,16 +23,20 @@ class UserController extends Controller
     /**
      * Menampilkan daftar semua pengguna.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        try {
-            return view('masteruser.index'); // Tampilkan view untuk DataTables
-        } catch (\Exception $e) {
-            Log::error('Error fetching users: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to fetch users'], 500);
+        $query = User::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
         }
+
+        $users = $query->get();
+
+        return view('masteruser.index', compact('users'));
     }
 
     public function create()
@@ -53,61 +57,57 @@ class UserController extends Controller
      */
     public function getData(Request $request)
     {
-        $query = User::query();
-    
-        // Filter pencarian jika diperlukan
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+        if ($request->ajax()) {
+            $data = User::query();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function($row){
+                    return '<a href="'.route('masteruser.edit', $row->id).'" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="'.route('masteruser.destroy', $row->id).'" class="btn btn-danger btn-sm delete-user">Delete</a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-    
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->addColumn('action', function($row) {
-                return '<a href="'.route('masteruser.show', $row->id).'" class="btn btn-info btn-sm">Show</a>
-                        <a href="'.route('masteruser.edit', $row->id).'" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="'.route('masteruser.destroy', $row->id).'" class="btn btn-danger btn-sm delete-user">Hapus</a>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
     }
-    
-
 
     /**
      * Menyimpan pengguna baru.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+   
+     public function store(Request $request)
 {
-    // Validasi request
     $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:8|confirmed', // 'confirmed' memastikan password dan konfirmasi cocok
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+        'role' => 'required|string|in:admin,user', // Validasi untuk role
     ]);
 
-    try {
-        // Enkripsi password sebelum menyimpannya
-        $encryptedPassword = Crypt::encryptString($request->password);
+    Log::info('Storing user data', [
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'role' => $request->input('role'),
+    ]);
 
-        // Simpan data pengguna baru
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $encryptedPassword, // Simpan password terenkripsi
-            'role' => $request->is_admin ? 'admin' : 'user', // Sesuaikan role
-        ]);
+    $user = new User();
+    $user->name = $request->input('name');
+    $user->email = $request->input('email');
+    $user->password = $request->input('password');
+    $user->original_password = $request->input('password');
+    $user->role = $request->input('role');
+    $user->save();
 
-        Log::info('User created successfully: ' . $user->id);
-        return redirect()->route('masteruser.index')->with('success', 'User berhasil disimpan'); // Redirect ke halaman user list
-    } catch (\Exception $e) {
-        Log::error('Error creating user: ' . $e->getMessage());
-        return back()->with('error', 'Gagal menyimpan user');
-    }
+    return redirect()->route('masteruser.index');
 }
+
+
+
+     
+
+
 
     /**
      * Memperbarui data pengguna.
@@ -117,54 +117,50 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
-    {
-        // Validasi permintaan
-        $validator = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'unique:users,email,' . $id,
-            ],
-            'password' => 'nullable|string|min:8|confirmed',
+{
+    $validator = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => [
+            'required',
+            'email',
+            'unique:users,email,' . $id,
+        ],
+        'password' => 'nullable|string|min:8|confirmed',
+        'role' => ['required', Rule::in(['admin', 'user'])], // Validasi role
+    ]);
+
+    try {
+        $user = User::findOrFail($id);
+        $this->authorize('update', $user);
+
+        $user->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => $request->filled('password') ? Hash::make($request->input('password')) : $user->password,
+            'role' => $request->role, // Update role jika diperlukan
         ]);
 
-        try {
-            // Temukan pengguna yang ingin diperbarui
-            $user = User::findOrFail($id);
+        Log::info('User updated successfully: ' . $user->id);
 
-            // Cek izin akses dengan policy
-            $this->authorize('update', $user);
+        return response()->json(['success' => 'User updated successfully.'], 200);
 
-            // Perbarui data pengguna
-            $user->update([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => $request->filled('password') ? Hash::make($request->input('password')) : $user->password,
-            ]);
-
-            Log::info('User updated successfully: ' . $user->id);
-
-            // Kembalikan respons sukses
-            return response()->json(['success' => 'User updated successfully.'], 200);
-
-        } catch (\Exception $e) {
-            Log::error('Error updating user: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to update user.'], 500);
-        }
-    }
-
-    public function edit($id)
-{
-    try {
-        $user = User::findOrFail($id); // Ambil pengguna berdasarkan ID
-        return view('masteruser.edit', compact('user')); // Tampilkan view edit dengan data pengguna
     } catch (\Exception $e) {
-        Log::error('Error displaying edit form: ' . $e->getMessage());
-        return redirect()->route('masteruser.index')->with('error', 'Gagal menampilkan form edit pengguna');
+        Log::error('Error updating user: ' . $e->getMessage());
+        return response()->json(['error' => 'Failed to update user.'], 500);
     }
 }
 
+
+    public function edit($id)
+    {
+        try {
+            $user = User::findOrFail($id); // Ambil pengguna berdasarkan ID
+            return view('masteruser.edit', compact('user')); // Tampilkan view edit dengan data pengguna
+        } catch (\Exception $e) {
+            Log::error('Error displaying edit form: ' . $e->getMessage());
+            return redirect()->route('masteruser.index')->with('error', 'Gagal menampilkan form edit pengguna');
+        }
+    }
 
     /**
      * Menghapus pengguna.
@@ -175,17 +171,12 @@ class UserController extends Controller
     public function destroy($id)
 {
     $authUser = auth()->user();
-
-    // Temukan pengguna yang akan dihapus
     $user = User::findOrFail($id);
-
-    // Pastikan pengguna yang sedang login memiliki izin untuk menghapus pengguna ini
     $this->authorize('delete', $user);
 
     try {
         $user->delete();
         Log::info('User deleted successfully: ' . $user->id);
-
         return response()->json(['success' => 'User deleted successfully.'], 200);
     } catch (\Exception $e) {
         Log::error('Error deleting user: ' . $e->getMessage());
@@ -198,22 +189,25 @@ class UserController extends Controller
      * Menampilkan detail pengguna.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\View\View
      */
+    // Di controller admin
+    public function show($id)
+    {
+        $user = User::find($id);
+        
+        try {
+            $decryptedPassword = $user->original_password; // Mengakses metode akses
+            Log::info('Decrypted Password', ['password' => $decryptedPassword]);
+        } catch (DecryptException $e) {
+            Log::error('Decryption failed: ' . $e->getMessage());
+            $decryptedPassword = 'Password cannot be decrypted';
+        }
+    
+        return view('masteruser.show', compact('user', 'decryptedPassword'));
+    }
     
 
-public function show($id)
-{
-    // Temukan user berdasarkan ID
-    $user = User::findOrFail($id);
 
-    // Dekripsi password jika perlu
-    $decryptedPassword = Crypt::decryptString($user->password);
-
-    // Tampilkan tampilan dengan data user
-    return view('masteruser.show', compact('user', 'decryptedPassword'));
-}
-
-    
 
 }
