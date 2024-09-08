@@ -72,24 +72,22 @@ class AksesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        // Temukan user berdasarkan ID
-        $user = User::findOrFail($id);
+{
+    $akses = Aksess::findOrFail($id);
 
-        // Dekripsi password jika ada
-        if ($user->password) {
-            try {
-                $user->password = Crypt::decryptString($user->password);
-            } catch (DecryptException $e) {
-                // Log error jika dekripsi gagal
-                Log::error('DecryptException: ' . $e->getMessage());
-                $user->password = 'Gagal mendekripsi password';
-            }
+    // Dekripsi password jika ada
+    if ($akses->password) {
+        try {
+            $akses->password = Crypt::decryptString($akses->password);
+        } catch (DecryptException $e) {
+            \Log::error('DecryptException: ' . $e->getMessage());
+            $akses->password = 'Gagal mendekripsi password';
         }
-
-        // Tampilkan tampilan dengan data user
-        return view('user.show', compact('user'));
     }
+
+    return view('akses.show', compact('akses'));
+}
+
 
     /**
      * Show the form for editing the specified resource.

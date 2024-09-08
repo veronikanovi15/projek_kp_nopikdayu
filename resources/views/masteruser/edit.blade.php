@@ -48,32 +48,42 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            $('#updateForm').on('submit', function(e) {
-                e.preventDefault(); // Mencegah form submit secara default
+    $('#updateForm').on('submit', function(e) {
+        e.preventDefault();
 
-                var url = $(this).attr('action');
-                $.ajax({
-                    url: url,
-                    type: 'PUT',
-                    data: $(this).serialize(), // Mengirimkan data form yang telah di-serialize
-                    success: function(response) {
-                        Swal.fire(
-                            'Berhasil!',
-                            'User telah diperbarui.',
-                            'success'
-                        ).then(() => {
-                            window.location.href = '{{ route("masteruser.index") }}'; // Arahkan ke halaman utama masteruser
-                        });
-                    },
-                    error: function(xhr) {
-                        Swal.fire(
-                            'Gagal!',
-                            'Terjadi kesalahan saat memperbarui user.',
-                            'error'
-                        );
-                    }
-                });
-            });
+        var url = $(this).attr('action');
+        $.ajax({
+            url: url,
+            type: 'PUT',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire(
+                        'Berhasil!',
+                        'User telah diperbarui.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '{{ route("masteruser.index") }}';
+                    });
+                } else {
+                    Swal.fire(
+                        'Gagal!',
+                        'Terjadi kesalahan saat memperbarui user.',
+                        'error'
+                    );
+                }
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr.responseText); // Debugging
+                Swal.fire(
+                    'Gagal!',
+                    'Terjadi kesalahan saat memperbarui user.',
+                    'error'
+                );
+            }
         });
+    });
+});
+
     </script>
 @endpush

@@ -24,8 +24,10 @@ public function update(User $authUser, User $user)
 
 public function delete(User $authUser, User $user)
 {
-    return $authUser->role === 'admin';
+    \Log::info("Authorization check: Auth User ID: " . $authUser->id . ", User ID: " . $user->id);
+    return $authUser->role === 'admin' || $authUser->id === $user->id;
 }
+
 
 }
 

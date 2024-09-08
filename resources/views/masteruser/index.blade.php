@@ -69,14 +69,15 @@
     <script>
     $(document).ready(function() {
     // Inisialisasi DataTable
-    $('#userTable').DataTable({
+    var table = $('#userTable').DataTable({
         processing: true,
         serverSide: true,
+        searching: false, // Menonaktifkan pencarian default DataTables
         ajax: {
             url: '{{ route('masteruser.data') }}',
             type: 'GET',
             data: function(d) {
-                d.search = $('#search').val();
+                d.search = $('#search').val(); // Ambil nilai pencarian dari input
             }
         },
         columns: [
@@ -92,17 +93,24 @@
                     return `
                         <a href="{{ url('masteruser') }}/${row.id}" class="btn btn-info btn-sm">Show</a>
                         <a href="${row.edit_url}" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="${row.delete_url}" class="btn btn-danger btn-sm delete-user">Delete</a>
+                        <a href="${row.delete_url}" class="btn btn-danger btn-sm delete-user" data-id="${row.id}">Delete</a>
                     `;
                 }
             }
         ]
     });
 
+    // Trigger reload DataTable saat tombol "Cari" ditekan
+    $('form').on('submit', function(e) {
+        e.preventDefault(); // Mencegah reload halaman
+        table.ajax.reload(); // Memuat ulang data tabel
+    });
+
     // Penanganan tombol delete dengan SweetAlert2
     $('#userTable').on('click', '.delete-user', function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
+        var id = $(this).data('id');
         Swal.fire({
             title: 'Yakin ingin menghapus?',
             icon: 'warning',
@@ -114,14 +122,16 @@
                 $.ajax({
                     url: url,
                     type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        $('#userTable').DataTable().ajax.reload(); // Reload tabel setelah delete
-                        Swal.fire('Terhapus!', 'User telah dihapus.', 'success').then(() => {
-                            window.location.href = '{{ route('masteruser.index') }}'; // Redirect setelah aksi berhasil
-                        });
+                        if (response.success) {
+                            Swal.fire('Terhapus!', 'User telah dihapus.', 'success');
+                            table.ajax.reload(); // Reload DataTable
+                        } else {
+                            Swal.fire('Gagal!', response.message, 'error');
+                        }
                     },
                     error: function(xhr) {
                         Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus user.', 'error');
@@ -131,6 +141,7 @@
         });
     });
 });
+
 
     </script>
 @endpush

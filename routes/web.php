@@ -33,16 +33,17 @@ Route::middleware('auth')->group(function () {
 
     // Rute masteruser
     // Rute untuk Admin
-Route::prefix('masteruser')->middleware('admin')->group(function () {
-    Route::get('/', [UserController::class, 'index'])->name('masteruser.index');
-    Route::get('/create', [UserController::class, 'create'])->name('masteruser.create');
-    Route::post('/', [UserController::class, 'store'])->name('masteruser.store');
-    Route::get('/data', [UserController::class, 'getData'])->name('masteruser.data');
-    Route::get('/{id}', [UserController::class, 'show'])->name('masteruser.show');
-    Route::get('/{id}/edit', [UserController::class, 'edit'])->name('masteruser.edit');
-    Route::put('/{id}', [UserController::class, 'update'])->name('masteruser.update');
-    Route::delete('/{id}', [UserController::class, 'destroy'])->name('masteruser.destroy');
-});
+    Route::prefix('masteruser')->middleware('admin')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('masteruser.index');
+        Route::get('/create', [UserController::class, 'create'])->name('masteruser.create');
+        Route::post('/', [UserController::class, 'store'])->name('masteruser.store');
+        Route::get('/data', [UserController::class, 'getData'])->name('masteruser.data');
+        Route::get('/{id}', [UserController::class, 'show'])->name('masteruser.show');
+        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('masteruser.edit');
+        Route::put('/{id}', [UserController::class, 'update'])->name('masteruser.update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('masteruser.destroy');
+    });
+    
 
     // Rute logout
     Route::post('/logout', function () {

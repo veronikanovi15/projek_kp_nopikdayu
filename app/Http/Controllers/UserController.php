@@ -56,19 +56,34 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getData(Request $request)
-    {
-        if ($request->ajax()) {
-            $data = User::query();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    return '<a href="'.route('masteruser.edit', $row->id).'" class="btn btn-primary btn-sm">Edit</a>
-                            <a href="'.route('masteruser.destroy', $row->id).'" class="btn btn-danger btn-sm delete-user">Delete</a>';
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+{
+    if ($request->ajax()) {
+        // Inisialisasi query untuk mengambil data user
+        $data = User::query();
+
+        // Cek apakah ada input pencarian
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+
+            // Tambahkan kondisi pencarian pada query
+            $data->where(function($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%');
+            });
         }
+
+        // Mengembalikan data ke DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($row) {
+                return '<a href="'.route('masteruser.edit', $row->id).'" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="'.route('masteruser.destroy', $row->id).'" class="btn btn-danger btn-sm delete-user">Delete</a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+}
+
 
     /**
      * Menyimpan pengguna baru.
@@ -118,49 +133,44 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
 {
-    $validator = $request->validate([
+    $user = User::findOrFail($id);
+
+    $request->validate([
         'name' => 'required|string|max:255',
-        'email' => [
-            'required',
-            'email',
-            'unique:users,email,' . $id,
-        ],
-        'password' => 'nullable|string|min:8|confirmed',
-        'role' => ['required', Rule::in(['admin', 'user'])], // Validasi role
+        'email' => 'required|email|max:255',
+        'password' => 'nullable|string|min:6|confirmed',
+        'role' => 'required|in:admin,user',
     ]);
 
-    try {
-        $user = User::findOrFail($id);
-        $this->authorize('update', $user);
+    // Logging data sebelum update
+    Log::info('Updating user', [
+        'user_id' => $user->id,
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'role' => $request->input('role'),
+    ]);
 
-        $user->update([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => $request->filled('password') ? Hash::make($request->input('password')) : $user->password,
-            'role' => $request->role, // Update role jika diperlukan
-        ]);
+    $user->name = $request->input('name');
+    $user->email = $request->input('email');
 
-        Log::info('User updated successfully: ' . $user->id);
-
-        return response()->json(['success' => 'User updated successfully.'], 200);
-
-    } catch (\Exception $e) {
-        Log::error('Error updating user: ' . $e->getMessage());
-        return response()->json(['error' => 'Failed to update user.'], 500);
+    if ($request->filled('password')) {
+        $user->password = bcrypt($request->input('password'));
     }
+
+    $user->role = $request->input('role');
+    $user->save();
+
+    return response()->json(['success' => true]);
 }
 
 
-    public function edit($id)
-    {
-        try {
-            $user = User::findOrFail($id); // Ambil pengguna berdasarkan ID
-            return view('masteruser.edit', compact('user')); // Tampilkan view edit dengan data pengguna
-        } catch (\Exception $e) {
-            Log::error('Error displaying edit form: ' . $e->getMessage());
-            return redirect()->route('masteruser.index')->with('error', 'Gagal menampilkan form edit pengguna');
-        }
-    }
+
+
+public function edit($id)
+{
+    $user = User::findOrFail($id);
+    return view('masteruser.edit', compact('user'));
+}
 
     /**
      * Menghapus pengguna.
@@ -168,21 +178,32 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
+    // Controller saat menghapus
     public function destroy($id)
 {
-    $authUser = auth()->user();
-    $user = User::findOrFail($id);
-    $this->authorize('delete', $user);
-
     try {
+        $user = User::findOrFail($id);
         $user->delete();
-        Log::info('User deleted successfully: ' . $user->id);
-        return response()->json(['success' => 'User deleted successfully.'], 200);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil dihapus',
+        ]);
     } catch (\Exception $e) {
-        Log::error('Error deleting user: ' . $e->getMessage());
-        return response()->json(['error' => 'Failed to delete user.'], 500);
+        Log::error('Exception during delete: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat menghapus user',
+        ]);
     }
 }
+
+
+
+
+
+
+
 
 
     /**
