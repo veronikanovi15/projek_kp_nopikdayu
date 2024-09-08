@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengganti password">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengganti password" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="role">Role</label>
@@ -47,11 +47,15 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function() {
+    $(document).ready(function() {
     $('#updateForm').on('submit', function(e) {
         e.preventDefault();
 
+        // Ambil URL dari atribut action formulir
         var url = $(this).attr('action');
+        console.log('Form action:', $(this).attr('action')); // Debugging
+        console.log('AJAX URL:', url); // Debugging
+
         $.ajax({
             url: url,
             type: 'PUT',
@@ -84,6 +88,7 @@
         });
     });
 });
+
 
     </script>
 @endpush

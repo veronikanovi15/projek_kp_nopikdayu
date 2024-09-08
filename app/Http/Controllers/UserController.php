@@ -56,33 +56,35 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getData(Request $request)
-{
-    if ($request->ajax()) {
-        // Inisialisasi query untuk mengambil data user
-        $data = User::query();
-
-        // Cek apakah ada input pencarian
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-
-            // Tambahkan kondisi pencarian pada query
-            $data->where(function($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('email', 'like', '%' . $search . '%');
-            });
+    {
+        if ($request->ajax()) {
+            // Inisialisasi query untuk mengambil data user
+            $data = User::query();
+    
+            // Cek apakah ada input pencarian
+            if ($request->has('search') && !empty($request->search['value'])) {
+                $search = $request->search['value']; // Mengambil nilai pencarian
+    
+                // Tambahkan kondisi pencarian pada query
+                $data->where(function($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                          ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            }
+    
+            // Mengembalikan data ke DataTables
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function($row) {
+                    return '<a href="'.route('masteruser.edit', $row->id).'" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="'.route('masteruser.destroy', $row->id).'" class="btn btn-danger btn-sm delete-user" data-id="'.$row->id.'">Delete</a>';
+                          
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-
-        // Mengembalikan data ke DataTables
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row) {
-                return '<a href="'.route('masteruser.edit', $row->id).'" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="'.route('masteruser.destroy', $row->id).'" class="btn btn-danger btn-sm delete-user">Delete</a>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
     }
-}
+    
 
 
     /**
@@ -142,7 +144,6 @@ class UserController extends Controller
         'role' => 'required|in:admin,user',
     ]);
 
-    // Logging data sebelum update
     Log::info('Updating user', [
         'user_id' => $user->id,
         'name' => $request->input('name'),
@@ -162,6 +163,7 @@ class UserController extends Controller
 
     return response()->json(['success' => true]);
 }
+
 
 
 
@@ -197,6 +199,7 @@ public function edit($id)
         ]);
     }
 }
+
 
 
 

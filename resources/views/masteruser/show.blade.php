@@ -19,7 +19,7 @@
         <p><strong>Dibuat pada:</strong> {{ $user->created_at->format('d-m-Y H:i:s') }}</p>
         <p><strong>Diubah pada:</strong> {{ $user->updated_at->format('d-m-Y H:i:s') }}</p>
         <p><strong>Password:</strong> {{ $decryptedPassword }}</p>
-        <a href="{{ route('masteruser.edit', $user->id) }}" class="btn btn-warning">Edit</a>
+        
         <a href="{{ route('masteruser.index') }}" class="btn btn-secondary">Kembali</a>
     </div>
 </div>
