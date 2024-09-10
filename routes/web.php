@@ -24,8 +24,8 @@ Route::middleware('auth')->group(function () {
 
     // Rute kunjungan
     Route::resource('kunjungan', KunjunganController::class);
-    Route::get('/kunjungan/laporan', [KunjunganController::class, 'laporan'])->name('kunjungan.laporan');
-    Route::get('/kunjungan/cetak', [KunjunganController::class, 'cetakLaporan'])->name('kunjungan.cetak');
+    Route::get('/kunjungan-laporan', [KunjunganController::class, 'laporan'])->name('kunjungan.laporan');
+    Route::get('/kunjungan-cetak', [KunjunganController::class, 'cetakLaporan'])->name('kunjungan.cetak');
 
     // Rute akses
     Route::resource('akses', AksesController::class);

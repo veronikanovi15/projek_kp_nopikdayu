@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <div class="card mb-4">
+    <!-- <div class="card mb-4">
         <div class="card-header">
             <h3 class="card-title">Pencarian Data User</h3>
             <div class="card-tools">
@@ -30,7 +30,7 @@
                 </a>
             </form>
         </div>
-    </div>
+    </div> -->
 
     <div class="card">
         <div class="card-header">
@@ -72,7 +72,7 @@
     var table = $('#userTable').DataTable({
         processing: true,
         serverSide: true,
-        searching: false, // Menonaktifkan pencarian default DataTables
+        
         ajax: {
             url: '{{ route('masteruser.data') }}',
             type: 'GET',
