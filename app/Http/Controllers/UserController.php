@@ -44,25 +44,25 @@ class UserController extends Controller
 
     // Menampilkan detail user
     public function show($id)
-{
-    $user = User::find($id);
-
-    try {
-        // Dekripsi password
-        $decryptedPassword = Crypt::decryptString($user->password); // Menggunakan 'password' jika itu yang disimpan
-        Log::info('Decrypted Password', ['password' => $decryptedPassword]);
-    } catch (DecryptException $e) {
-        Log::error('Decryption failed: ' . $e->getMessage());
-        $decryptedPassword = 'Password cannot be decrypted'; // Pesan kesalahan jika dekripsi gagal
+    {
+        $user = User::find($id);
+    
+        try {
+            // Dekripsi password
+            $decryptedPassword = $user->original_password; // Menggunakan accessor getOriginalPasswordAttribute
+            Log::info('Decrypted Password', ['password' => $decryptedPassword]);
+        } catch (DecryptException $e) {
+            Log::error('Decryption failed: ' . $e->getMessage());
+            $decryptedPassword = 'Password cannot be decrypted'; // Pesan kesalahan jika dekripsi gagal
+        }
+    
+        return response()->json([
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'decryptedPassword' => $decryptedPassword
+        ]);
     }
-
-    return response()->json([
-        'name' => $user->name,
-        'email' => $user->email,
-        'role' => $user->role,
-        'decryptedPassword' => $decryptedPassword
-    ]);
-}
 
 
 
@@ -115,47 +115,24 @@ class UserController extends Controller
 
 public function store(Request $request)
 {
-    // Log request data
-    \Log::info('Request data: ', $request->all());
-
-    // Validasi data input
-    $validator = Validator::make($request->all(), [
+    $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6|confirmed',
-        'role' => 'required|in:admin,user',
+        'password' => 'required|string|min:8',
+        'role' => 'required|string|in:admin,user',
     ]);
 
-    if ($validator->fails()) {
-        \Log::info('Validation failed: ', $validator->errors()->all()); // Log validasi gagal
-        return response()->json([
-            'success' => false,
-            'message' => $validator->errors()->first(),
-        ]);
-    }
+    $user = new User();
+    $user->name = $validated['name'];
+    $user->email = $validated['email'];
+    $user->password = $validated['password']; // Ini akan di-hash oleh accessor
+    $user->original_password = $validated['password']; // Enkripsi password asli
+    $user->role = $validated['role'];
+    $user->save();
 
-    // Simpan data user baru
-    try {
-        $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->password = Hash::make($request->input('password'));
-        $user->role = $request->input('role');
-        $user->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User berhasil ditambahkan.',
-        ]);
-
-    } catch (\Exception $e) {
-        \Log::error('Exception: ', ['message' => $e->getMessage()]); // Log exception
-        return response()->json([
-            'success' => false,
-            'message' => 'Terjadi kesalahan saat menambahkan user.',
-        ]);
-    }
+    return response()->json(['success' => true]);
 }
+
 }
 
 
