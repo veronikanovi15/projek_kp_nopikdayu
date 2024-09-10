@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
     // Rute kunjungan
     Route::resource('kunjungan', KunjunganController::class);
+    // Rute cetak laporan Kunjungan
     Route::get('/kunjungan-laporan', [KunjunganController::class, 'laporan'])->name('kunjungan.laporan');
     Route::get('/kunjungan-cetak', [KunjunganController::class, 'cetakLaporan'])->name('kunjungan.cetak');
 
@@ -32,7 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/akses/{id}/password', [AksesController::class, 'getPassword'])->name('akses.password');
 
     // Rute masteruser
-    // Rute untuk Admin
     Route::prefix('masteruser')->middleware('admin')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('masteruser.index');
         Route::get('/create', [UserController::class, 'create'])->name('masteruser.create');
@@ -44,7 +44,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('masteruser.destroy');
     });
     
-
     // Rute logout
     Route::post('/logout', function () {
         Log::info('Logout route accessed');
@@ -52,3 +51,4 @@ Route::middleware('auth')->group(function () {
         return redirect('/');
     })->name('logout');
 });
+
