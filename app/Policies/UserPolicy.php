@@ -25,8 +25,12 @@ public function update(User $authUser, User $user)
 public function delete(User $authUser, User $user)
 {
     \Log::info("Authorization check: Auth User ID: " . $authUser->id . ", User ID: " . $user->id);
+    \Log::info("Auth User Role: " . $authUser->role);
+    \Log::info("Policy Result: " . ($authUser->role === 'admin' || $authUser->id === $user->id ? 'Allowed' : 'Denied'));
+
     return $authUser->role === 'admin' || $authUser->id === $user->id;
 }
+
 
 
 }

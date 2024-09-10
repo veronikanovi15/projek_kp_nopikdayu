@@ -32,18 +32,20 @@ Route::middleware('auth')->group(function () {
     Route::resource('akses', AksesController::class);
     Route::get('/akses/{id}/password', [AksesController::class, 'getPassword'])->name('akses.password');
 
-    // Rute masteruser
-    Route::prefix('masteruser')->middleware('admin')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('masteruser.index');
-        Route::get('/create', [UserController::class, 'create'])->name('masteruser.create');
-        Route::post('/', [UserController::class, 'store'])->name('masteruser.store');
-        Route::get('/data', [UserController::class, 'getData'])->name('masteruser.data');
-        Route::get('/{id}', [UserController::class, 'show'])->name('masteruser.show');
-        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('masteruser.edit');
-        Route::put('/{id}', [UserController::class, 'update'])->name('masteruser.update');
-        Route::delete('/{id}', [UserController::class, 'destroy'])->name('masteruser.destroy');
+    Route::middleware(['admin'])->group(function () {
+        Route::prefix('masteruser')->name('masteruser.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/users/data', [UserController::class, 'getData'])->name('getData');
+            Route::get('/{id}', [UserController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [UserController::class, 'update'])->name('update');
+            Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
+            Route::post('/create', [UserController::class, 'store'])->name('store'); // Rute untuk menyimpan user baru
+        });
     });
     
+
+
     // Rute logout
     Route::post('/logout', function () {
         Log::info('Logout route accessed');

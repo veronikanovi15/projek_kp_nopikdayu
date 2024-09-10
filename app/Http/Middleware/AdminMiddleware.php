@@ -15,14 +15,13 @@ class AdminMiddleware
      * @return mixed
      */
     public function handle($request, Closure $next)
-{
-    if (Auth::check() && Auth::user()->role === 'admin') {
-        \Log::info('AdminMiddleware passed: User is admin.');
-        return $next($request);
-    }    
+    {
+        // Cek apakah user terotentikasi dan memiliki role admin
+        if (Auth::check() && Auth::user()->role === 'admin') {
+            return $next($request);
+        }
 
-    \Log::warning('AdminMiddleware failed: User is not admin.');
-    // Redirect jika bukan admin
-    return redirect('/dashboard')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
-}
+        // Jika bukan admin, redirect atau beri respons sesuai kebutuhan Anda
+        return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+    }
 }
