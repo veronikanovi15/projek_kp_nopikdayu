@@ -7,31 +7,6 @@
 @endsection
 
 @section('content')
-    <!-- <div class="card mb-4">
-        <div class="card-header">
-            <h3 class="card-title">Pencarian Data User</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
-        </div>
-        <div class="card-body">
-            <form method="GET" action="{{ route('masteruser.index') }}">
-                <div class="form-group">
-                    <label for="search">Cari Data:</label>
-                    <input type="text" name="search" class="form-control" id="search" placeholder="Masukkan kata kunci pencarian" value="{{ request('search') }}">
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-search"></i> Cari
-                </button>
-                <a href="{{ route('masteruser.index') }}" class="btn btn-secondary">
-                    <i class="fa fa-times"></i> Reset
-                </a>
-            </form>
-        </div>
-    </div> -->
-
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Daftar User</h3>
