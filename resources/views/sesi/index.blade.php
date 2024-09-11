@@ -82,7 +82,6 @@
                     <div class="alert alert-danger">{{ $errors->first('email') }}</div>
                 @endif
             </form>
-            <p>Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

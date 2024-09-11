@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AksesController;
 use App\Http\Controllers\ControllerDashboard;
-use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\KunjunganController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
@@ -13,10 +12,6 @@ use App\Http\Controllers\UserController;
 // Rute untuk tampilan login
 Route::get('/', [SessionController::class, 'index'])->name('login');
 Route::post('/sesi/login', [SessionController::class, 'login'])->name('login.submit');
-
-// Rute registrasi
-Route::get('/register', [RegisterController::class, 'regis'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 // Rute yang dilindungi middleware auth
 Route::middleware('auth')->group(function () {
