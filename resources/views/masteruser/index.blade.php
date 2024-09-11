@@ -153,7 +153,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    $(document).ready(function () {
+   $(document).ready(function () {
     // Inisialisasi DataTable
     var table = $('#userTable').DataTable({
         processing: true,
@@ -184,29 +184,28 @@
 
     // Submit Create Form
     $('#createForm').on('submit', function (e) {
-    e.preventDefault();
-    console.log($(this).serialize()); // Cek data yang dikirim
-    $.ajax({
-        url: '{{ route('masteruser.store') }}',
-        type: 'POST',
-        data: $(this).serialize(),
-        success: function (response) {
-            console.log(response); // Cek respons dari server
-            if (response.success) {
-                $('#createUserModal').modal('hide');
-                table.ajax.reload();
-                Swal.fire('Berhasil!', 'User berhasil ditambahkan.', 'success');
-            } else {
-                Swal.fire('Gagal!', response.message, 'error');
+        e.preventDefault();
+        $.ajax({
+            url: '{{ route('masteruser.store') }}',
+            type: 'POST',
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    $('#createUserModal').modal('hide');
+                    table.ajax.reload();
+                    Swal.fire('Berhasil!', 'User berhasil ditambahkan.', 'success');
+                } else {
+                    Swal.fire('Gagal!', response.message, 'error');
+                }
+            },
+            error: function (xhr) {
+                Swal.fire('Gagal!', 'Terjadi kesalahan saat menambahkan user.', 'error');
             }
-        },
-        error: function (xhr) {
-            console.log(xhr.responseText); // Cek error dari server
-            Swal.fire('Gagal!', 'Terjadi kesalahan saat menambahkan user.', 'error');
-        }
+        });
     });
-});
-
 
     // Show User
     $(document).on('click', '.show-user', function () {
@@ -215,11 +214,6 @@
             url: '{{ route('masteruser.show', '__ID__') }}'.replace('__ID__', id),
             type: 'GET',
             success: function (response) {
-                if (response.error) {
-                    Swal.fire('Error', response.error, 'error');
-                    return;
-                }
-
                 $('#showUserDetails').html(`
                     <p><strong>Nama:</strong> ${response.name}</p>
                     <p><strong>Email:</strong> ${response.email}</p>
@@ -257,6 +251,9 @@
             url: '{{ url('masteruser') }}/' + id,
             type: 'PUT',
             data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function (response) {
                 if (response.success) {
                     $('#editUserModal').modal('hide');
@@ -284,21 +281,26 @@
         $.ajax({
             url: '{{ url('masteruser') }}/' + id,
             type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function (response) {
                 if (response.success) {
                     $('#deleteUserModal').modal('hide');
                     table.ajax.reload();
-                    Swal.fire('Berhasil!', 'User berhasil dihapus.', 'success');
+                    Swal.fire('Berhasil!', response.message, 'success');
                 } else {
                     Swal.fire('Gagal!', response.message, 'error');
                 }
             },
-            error: function () {
+            error: function (xhr) {
+                console.log(xhr.responseText); // Untuk debugging
                 Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus user.', 'error');
             }
         });
     });
 });
+
 
 
 
