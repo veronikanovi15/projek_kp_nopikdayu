@@ -153,7 +153,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-   $(document).ready(function () {
+    $(document).ready(function () {
     // Inisialisasi DataTable
     var table = $('#userTable').DataTable({
         processing: true,
@@ -197,6 +197,9 @@
                     $('#createUserModal').modal('hide');
                     table.ajax.reload();
                     Swal.fire('Berhasil!', 'User berhasil ditambahkan.', 'success');
+                    
+                    // Reset form
+                    $('#createForm')[0].reset();
                 } else {
                     Swal.fire('Gagal!', response.message, 'error');
                 }
@@ -299,7 +302,13 @@
             }
         });
     });
+
+    // Reset form ketika modal ditutup
+    $('#createUserModal').on('hidden.bs.modal', function () {
+        $('#createForm')[0].reset(); // Mereset form
+    });
 });
+
 
 
 
